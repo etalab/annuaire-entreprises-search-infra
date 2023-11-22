@@ -5,7 +5,7 @@ from dag_datalake_sirene.config import COLOR_URL
 
 
 def get_next_color():
-    return "20231122"
+    return "20231123"
     try:
         with urlopen(COLOR_URL, timeout=5) as url:
             data = json.loads(url.read().decode())
