@@ -6,8 +6,8 @@ from dag_datalake_sirene.config import COLOR_URL
 
 
 def get_colors(**kwargs):
-    kwargs["ti"].xcom_push(key="next_color", value="20231122")
-    kwargs["ti"].xcom_push(key="current_color", value="green")
+    kwargs["ti"].xcom_push(key="next_color", value="20231123")
+    kwargs["ti"].xcom_push(key="current_color", value="20231122")
 
     # try:
     #     with urlopen(COLOR_URL, timeout=5) as url:

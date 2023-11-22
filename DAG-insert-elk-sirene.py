@@ -126,4 +126,5 @@ with DAG(
         python_callable=fill_elastic_siren_index,
     )
 
-    fill_elastic_siren_index.set_upstream(get_colors)
+    create_elastic_index.set_upstream(get_colors)
+    fill_elastic_siren_index.set_upstream(create_elastic_index)
