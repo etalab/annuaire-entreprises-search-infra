@@ -91,15 +91,11 @@ def index_unites_legales_by_chunk(
                 if not success:
                     raise Exception(f"A file_access document failed: {details}")
                 else:
-                    print(success)
-                    print(details)
+                    doc_count += 1
         except Exception as e:
             logging.error(f"Failed to send to Elasticsearch: {e}")
-        # doc_count = elastic_connection.cat.count(
-        #     index=elastic_index, params={"format": "json"}
-        # )[0]["count"]
-        #
-        # logging.info(f"Number of documents indexed: {doc_count}")
+
+        logging.info(f"Number of documents indexed: {doc_count}")
 
     # rollback to the original value
     elastic_connection.indices.put_settings(index=elastic_index, body={"index.refresh_interval": None})
