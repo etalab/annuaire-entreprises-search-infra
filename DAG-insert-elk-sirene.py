@@ -110,9 +110,9 @@ with DAG(
     # on_failure_callback=send_notification_failure_tchap,
     max_active_runs=1,
 ) as dag:
-    # get_colors = PythonOperator(
-    #     task_id="get_colors", provide_context=True, python_callable=get_colors
-    # )
+    get_colors = PythonOperator(
+        task_id="get_colors", provide_context=True, python_callable=get_colors
+    )
 
     clean_previous_folder = CleanFolderOperator(
         task_id="clean_previous_folder",
@@ -362,7 +362,7 @@ with DAG(
     #     python_callable=send_notification_success_tchap,
     # )
 
-    # clean_previous_folder.set_upstream(get_colors)
+    clean_previous_folder.set_upstream(get_colors)
     create_sqlite_database.set_upstream(clean_previous_folder)
 
     create_unite_legale_table.set_upstream(create_sqlite_database)

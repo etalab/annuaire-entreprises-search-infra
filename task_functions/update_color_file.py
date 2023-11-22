@@ -12,6 +12,8 @@ from dag_datalake_sirene.config import (
 
 
 def update_color_file(**kwargs):
+    return
+
     next_color = kwargs["ti"].xcom_pull(key="next_color", task_ids="get_colors")
     current_color = kwargs["ti"].xcom_pull(key="current_color", task_ids="get_colors")
     colors = {"CURRENT_COLOR": next_color, "NEXT_COLOR": current_color}
