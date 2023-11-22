@@ -110,9 +110,9 @@ with DAG(
     on_failure_callback=send_notification_failure_tchap,
     max_active_runs=1,
 ) as dag:
-    get_colors = PythonOperator(
-        task_id="get_colors", provide_context=True, python_callable=get_colors
-    )
+    # get_colors = PythonOperator(
+    #     task_id="get_colors", provide_context=True, python_callable=get_colors
+    # )
 
     clean_previous_folder = CleanFolderOperator(
         task_id="clean_previous_folder",
@@ -286,17 +286,17 @@ with DAG(
         python_callable=create_elastic_index,
     )
 
-    create_sitemap = PythonOperator(
-        task_id="create_sitemap",
-        provide_context=True,
-        python_callable=create_sitemap,
-    )
+    # create_sitemap = PythonOperator(
+    #     task_id="create_sitemap",
+    #     provide_context=True,
+    #     python_callable=create_sitemap,
+    # )
 
-    update_sitemap = PythonOperator(
-        task_id="update_sitemap",
-        provide_context=True,
-        python_callable=update_sitemap,
-    )
+    # update_sitemap = PythonOperator(
+    #     task_id="update_sitemap",
+    #     provide_context=True,
+    #     python_callable=update_sitemap,
+    # )
 
     fill_elastic_siren_index = PythonOperator(
         task_id="fill_elastic_siren_index",
@@ -304,44 +304,44 @@ with DAG(
         python_callable=fill_elastic_siren_index,
     )
 
-    check_elastic_index = PythonOperator(
-        task_id="check_elastic_index",
-        provide_context=True,
-        python_callable=check_elastic_index,
-    )
+    # check_elastic_index = PythonOperator(
+    #     task_id="check_elastic_index",
+    #     provide_context=True,
+    #     python_callable=check_elastic_index,
+    # )
 
-    update_color_file = PythonOperator(
-        task_id="update_color_file",
-        provide_context=True,
-        python_callable=update_color_file,
-    )
+    # update_color_file = PythonOperator(
+    #     task_id="update_color_file",
+    #     provide_context=True,
+    #     python_callable=update_color_file,
+    # )
 
-    execute_aio_container = SSHOperator(
-        ssh_conn_id="SERVER",
-        task_id="execute_aio_container",
-        command=f"cd {PATH_AIO} "
-        f"&& docker-compose -f docker-compose-aio.yml up --build -d --force",
-        cmd_timeout=60,
-        dag=dag,
-    )
+    # execute_aio_container = SSHOperator(
+    #     ssh_conn_id="SERVER",
+    #     task_id="execute_aio_container",
+    #     command=f"cd {PATH_AIO} "
+    #     f"&& docker-compose -f docker-compose-aio.yml up --build -d --force",
+    #     cmd_timeout=60,
+    #     dag=dag,
+    # )
 
-    test_api = PythonOperator(
-        task_id="test_api",
-        provide_context=True,
-        python_callable=run_e2e_tests,
-    )
+    # test_api = PythonOperator(
+    #     task_id="test_api",
+    #     provide_context=True,
+    #     python_callable=run_e2e_tests,
+    # )
 
-    flush_cache = PythonOperator(
-        task_id="flush_cache",
-        provide_context=True,
-        python_callable=flush_cache,
-        op_args=(
-            REDIS_HOST,
-            REDIS_PORT,
-            REDIS_DB,
-            REDIS_PASSWORD,
-        ),
-    )
+    # flush_cache = PythonOperator(
+    #     task_id="flush_cache",
+    #     provide_context=True,
+    #     python_callable=flush_cache,
+    #     op_args=(
+    #         REDIS_HOST,
+    #         REDIS_PORT,
+    #         REDIS_DB,
+    #         REDIS_PASSWORD,
+    #     ),
+    # )
 
     success_email_body = f"""
     Hi, <br><br>
@@ -362,7 +362,7 @@ with DAG(
         python_callable=send_notification_success_tchap,
     )
 
-    clean_previous_folder.set_upstream(get_colors)
+    # clean_previous_folder.set_upstream(get_colors)
     create_sqlite_database.set_upstream(clean_previous_folder)
 
     create_unite_legale_table.set_upstream(create_sqlite_database)
@@ -396,17 +396,17 @@ with DAG(
 
     create_elastic_index.set_upstream(create_elu_table)
     fill_elastic_siren_index.set_upstream(create_elastic_index)
-    check_elastic_index.set_upstream(fill_elastic_siren_index)
+    # check_elastic_index.set_upstream(fill_elastic_siren_index)
 
-    create_sitemap.set_upstream(check_elastic_index)
-    update_sitemap.set_upstream(create_sitemap)
+    # create_sitemap.set_upstream(check_elastic_index)
+    # update_sitemap.set_upstream(create_sitemap)
 
-    update_color_file.set_upstream(check_elastic_index)
+    # update_color_file.set_upstream(check_elastic_index)
 
-    execute_aio_container.set_upstream(update_color_file)
-    test_api.set_upstream(execute_aio_container)
-    flush_cache.set_upstream(test_api)
+    # execute_aio_container.set_upstream(update_color_file)
+    # test_api.set_upstream(execute_aio_container)
+    # flush_cache.set_upstream(test_api)
 
-    send_email.set_upstream(flush_cache)
-    send_email.set_upstream(update_sitemap)
-    send_notification_tchap.set_upstream(send_email)
+    # send_email.set_upstream(flush_cache)
+    # send_email.set_upstream(update_sitemap)
+    # send_notification_tchap.set_upstream(send_email)
