@@ -54,6 +54,8 @@ def index_unites_legales_by_chunk(
 
     logger = 0
     chunk_unites_legales_sqlite = 1
+    doc_count = 0
+
     while chunk_unites_legales_sqlite:
         chunk_unites_legales_sqlite = cursor.fetchmany(elastic_bulk_size * 4)
         unite_legale_columns = tuple([x[0] for x in cursor.description])
