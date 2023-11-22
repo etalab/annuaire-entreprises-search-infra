@@ -49,10 +49,12 @@ def doc_unite_legale_generator(data):
 def index_unites_legales_by_chunk(
     cursor, elastic_connection, elastic_bulk_size, elastic_index
 ):
+    elastic_connection.indices.put_settings(index=elastic_index, settings={"refresh_interval": -1})
+
     logger = 0
     chunk_unites_legales_sqlite = 1
     while chunk_unites_legales_sqlite:
-        chunk_unites_legales_sqlite = cursor.fetchmany(elastic_bulk_size)
+        chunk_unites_legales_sqlite = cursor.fetchmany(elastic_bulk_size * 4)
         unite_legale_columns = tuple([x[0] for x in cursor.description])
         liste_unites_legales_sqlite = []
         # Group all fetched unites_legales from sqlite in one list
@@ -83,14 +85,25 @@ def index_unites_legales_by_chunk(
             # The bulk helper accept an instance of Elasticsearch class and an
             # iterable, a generator in our case
             for success, details in parallel_bulk(
-                elastic_connection, chunk_doc_generator, chunk_size=elastic_bulk_size
+                elastic_connection, chunk_doc_generator, chunk_size=elastic_bulk_size, thread_count=4
             ):
                 if not success:
                     raise Exception(f"A file_access document failed: {details}")
+                else:
+                    print(success)
+                    print(details)
         except Exception as e:
             logging.error(f"Failed to send to Elasticsearch: {e}")
-        doc_count = elastic_connection.cat.count(
-            index=elastic_index, params={"format": "json"}
-        )[0]["count"]
-        logging.info(f"Number of documents indexed: {doc_count}")
+        # doc_count = elastic_connection.cat.count(
+        #     index=elastic_index, params={"format": "json"}
+        # )[0]["count"]
+        #
+        # logging.info(f"Number of documents indexed: {doc_count}")
+
+    elastic_connection.indices.put_settings(index=elastic_index, settings={"refresh_interval": None})
+
+    doc_count = elastic_connection.cat.count(
+        index=elastic_index, params={"format": "json"}
+    )[0]["count"]
+
     return doc_count
