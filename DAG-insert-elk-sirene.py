@@ -349,18 +349,18 @@ with DAG(
     successfully at {datetime.now()}.
     """
 
-    send_email = EmailOperator(
-        task_id="send_email",
-        to=EMAIL_LIST,
-        subject=f"Airflow Success: DAG-{AIRFLOW_ENV}!",
-        html_content=success_email_body,
-        dag=dag,
-    )
+    # send_email = EmailOperator(
+    #     task_id="send_email",
+    #     to=EMAIL_LIST,
+    #     subject=f"Airflow Success: DAG-{AIRFLOW_ENV}!",
+    #     html_content=success_email_body,
+    #     dag=dag,
+    # )
 
-    send_notification_tchap = PythonOperator(
-        task_id="send_notification_tchap",
-        python_callable=send_notification_success_tchap,
-    )
+    # send_notification_tchap = PythonOperator(
+    #     task_id="send_notification_tchap",
+    #     python_callable=send_notification_success_tchap,
+    # )
 
     # clean_previous_folder.set_upstream(get_colors)
     create_sqlite_database.set_upstream(clean_previous_folder)
