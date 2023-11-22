@@ -100,7 +100,7 @@ default_args = {
 }
 
 with DAG(
-    dag_id=AIRFLOW_DAG_NAME,
+    dag_id="sirene-create-tables",
     default_args=default_args,
     schedule_interval="0 0 * * 1,3,5",
     start_date=datetime(2023, 9, 4),
@@ -345,7 +345,7 @@ with DAG(
 
     success_email_body = f"""
     Hi, <br><br>
-    insert-elk-sirene-{AIRFLOW_ENV} DAG has been executed
+    sirene-create-tables-{AIRFLOW_ENV} DAG has been executed
     successfully at {datetime.now()}.
     """
 
