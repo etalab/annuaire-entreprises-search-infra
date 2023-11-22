@@ -107,7 +107,7 @@ with DAG(
     dagrun_timeout=timedelta(minutes=60 * 15),
     tags=["siren"],
     catchup=False,  # False to ignore past runs
-    on_failure_callback=send_notification_failure_tchap,
+    # on_failure_callback=send_notification_failure_tchap,
     max_active_runs=1,
 ) as dag:
     # get_colors = PythonOperator(
@@ -394,8 +394,8 @@ with DAG(
     create_colter_table.set_upstream(create_egapro_table)
     create_elu_table.set_upstream(create_colter_table)
 
-    create_elastic_index.set_upstream(create_elu_table)
-    fill_elastic_siren_index.set_upstream(create_elastic_index)
+    # create_elastic_index.set_upstream(create_elu_table)
+    fill_elastic_siren_index.set_upstream(create_elu_table)
     # check_elastic_index.set_upstream(fill_elastic_siren_index)
 
     # create_sitemap.set_upstream(check_elastic_index)
