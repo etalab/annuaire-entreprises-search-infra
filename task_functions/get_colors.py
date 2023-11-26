@@ -3,11 +3,13 @@ import logging
 from urllib.request import urlopen
 
 from dag_datalake_sirene.config import COLOR_URL
-
+from datetime import datetime
 
 def get_colors(**kwargs):
-    kwargs["ti"].xcom_push(key="next_color", value="20231123")
-    kwargs["ti"].xcom_push(key="current_color", value="20231122")
+    current_date = datetime.today().strftime('%Y%m%d')
+
+    kwargs["ti"].xcom_push(key="next_color", value=current_date)
+    kwargs["ti"].xcom_push(key="current_color", value="20231123")
 
     # try:
     #     with urlopen(COLOR_URL, timeout=5) as url:

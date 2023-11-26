@@ -2,10 +2,12 @@ import json
 import logging
 from urllib.request import urlopen
 from dag_datalake_sirene.config import COLOR_URL
-
+from datetime import datetime
 
 def get_next_color():
-    return "20231123"
+    current_date = datetime.today().strftime('%Y%m%d')
+    return current_date
+
     try:
         with urlopen(COLOR_URL, timeout=5) as url:
             data = json.loads(url.read().decode())
