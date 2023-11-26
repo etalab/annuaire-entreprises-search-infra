@@ -7,24 +7,9 @@ from dag_datalake_sirene.task_functions.get_colors import get_colors
 from dag_datalake_sirene.task_functions.snapshot_elastic_siren_index import (
     snapshot_elastic_siren_index,
 )
-from dag_datalake_sirene.utils.minio_helpers import (
-    get_latest_file_minio,
-)
 from dag_datalake_sirene.config import (
-    AIRFLOW_DAG_TMP,
-    AIRFLOW_DAG_NAME,
-    AIRFLOW_DAG_FOLDER,
-    AIRFLOW_ENV,
-    DIRIG_DATABASE_LOCATION,
     EMAIL_LIST,
-    MINIO_BUCKET,
-    PATH_AIO,
-    REDIS_HOST,
-    REDIS_PORT,
-    REDIS_DB,
-    REDIS_PASSWORD,
 )
-
 
 default_args = {
     "depends_on_past": False,
