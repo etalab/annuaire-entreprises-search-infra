@@ -1,6 +1,3 @@
-from dag_datalake_sirene.elasticsearch.snapshot_unites_legales import (
-    snapshot_unites_legales,
-)
 from elasticsearch_dsl import connections
 from dag_datalake_sirene.config import (
     ELASTIC_URL,
