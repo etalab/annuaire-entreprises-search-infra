@@ -26,9 +26,8 @@ def snapshot_elastic_siren_index(**kwargs):
 
     elastic_connection = connections.get_connection()
 
-    snapshot_unites_legales(
-        elastic_connection=elastic_connection,
-        elastic_index=elastic_index,
+    elastic_connection.snapshot.create(
         repository=ELASTIC_SNAPSHOT_REPOSITORY,
-        snapshot_name=snapshot_name,
-    )
+        snapshot=snapshot_name,
+        body={'indices': [elastic_index]},
+        wait_for_completion=False)
