@@ -42,7 +42,7 @@ def doc_unite_legale_generator(data):
         # as is
         else:
             yield StructureMapping(
-                meta={"id": document["identifiant"]}, **document
+                meta={"id": f"{document['identifiant']}-100"}, **document
             ).to_dict(include_meta=True)
 
 
@@ -57,7 +57,7 @@ def index_unites_legales_by_chunk(
     doc_count = 0
 
     while chunk_unites_legales_sqlite:
-        chunk_unites_legales_sqlite = cursor.fetchmany(elastic_bulk_size * 4)
+        chunk_unites_legales_sqlite = cursor.fetchmany(elastic_bulk_size)
         unite_legale_columns = tuple([x[0] for x in cursor.description])
         liste_unites_legales_sqlite = []
         # Group all fetched unites_legales from sqlite in one list
@@ -88,7 +88,7 @@ def index_unites_legales_by_chunk(
             # The bulk helper accept an instance of Elasticsearch class and an
             # iterable, a generator in our case
             for success, details in parallel_bulk(
-                elastic_connection, chunk_doc_generator, chunk_size=elastic_bulk_size, thread_count=4
+                elastic_connection, chunk_doc_generator, chunk_size=elastic_bulk_size
             ):
                 if not success:
                     raise Exception(f"A file_access document failed: {details}")
