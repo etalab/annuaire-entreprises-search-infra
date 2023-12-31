@@ -34,4 +34,4 @@ def wait_for_downstream_elastic_siren_import(**kwargs):
             if elastic_index in indices:
                 completed.append(url)
 
-        pending = [ url for downstream_urls if url not in completed ]
+        pending = [ url for url in downstream_urls if url not in completed ]
