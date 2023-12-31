@@ -56,6 +56,9 @@ from dag_datalake_sirene.task_functions.fill_elastic_siren_index import (
 from dag_datalake_sirene.task_functions.snapshot_elastic_siren_index import (
     snapshot_elastic_siren_index,
 )
+from dag_datalake_sirene.task_functions.wait_for_downstream_import import (
+    wait_for_downstream_elastic_siren_import
+)
 from dag_datalake_sirene.task_functions.flush_cache import flush_cache
 from dag_datalake_sirene.utils.minio_helpers import (
     get_latest_file_minio,
@@ -313,11 +316,17 @@ with DAG(
         python_callable=snapshot_elastic_siren_index,
     )
 
-    # check_elastic_index = PythonOperator(
-    #     task_id="check_elastic_index",
-    #     provide_context=True,
-    #     python_callable=check_elastic_index,
-    # )
+    check_elastic_index = PythonOperator(
+        task_id="check_elastic_index",
+        provide_context=True,
+        python_callable=check_elastic_index,
+    )
+
+    wait_downstream_elastic_siren_index_import = PythonOperator(
+        task_id="wait_downstream_elastic_siren_index_import",
+        provide_context=True,
+        python_callable=snapshot_elastic_siren_index,
+    )
 
     # update_color_file = PythonOperator(
     #     task_id="update_color_file",
@@ -371,7 +380,6 @@ with DAG(
     #     python_callable=send_notification_success_tchap,
     # )
 
-    clean_previous_folder.set_upstream(get_colors)
     create_sqlite_database.set_upstream(clean_previous_folder)
 
     create_unite_legale_table.set_upstream(create_sqlite_database)
@@ -403,12 +411,13 @@ with DAG(
     create_colter_table.set_upstream(create_egapro_table)
     create_elu_table.set_upstream(create_colter_table)
 
-    create_elastic_index.set_upstream(create_elu_table)
+    get_colors.set_upstream(create_elu_table)
+    create_elastic_index.set_upstream(get_colors)
     fill_elastic_siren_index.set_upstream(create_elastic_index)
-
     snapshot_elastic_siren_index.set_upstream(fill_elastic_siren_index)
+    wait_downstream_elastic_siren_index_import.set_upstream(snapshot_elastic_siren_index)
+    # test_api.set_upstream(wait_downstream_elastic_siren_index_import)
 
-    # check_elastic_index.set_upstream(fill_elastic_siren_index)
 
     # create_sitemap.set_upstream(check_elastic_index)
     # update_sitemap.set_upstream(create_sitemap)

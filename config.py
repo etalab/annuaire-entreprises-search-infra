@@ -66,6 +66,12 @@ ELASTIC_SHARDS = 2
 ELASTIC_REPLICAS = 0
 
 
+ELASTIC_DOWNSTREAM_ALIAS = Variable.get("ELASTIC_DOWNSTREAM_ALIAS", "siren-reader")
+# comma separated URL
+ELASTIC_DOWNSTREAM_URLS = Variable.get("ELASTIC_DOWNSTREAM_URLS", "")
+ELASTIC_DOWNSTREAM_USER = Variable.get("ELASTIC_DOWNSTREAM_USER", "")
+ELASTIC_DOWNSTREAM_PASSWORD = Variable.get("ELASTIC_DOWNSTREAM_PASSWORD", "")
+
 # Datasets
 URL_AGENCE_BIO = (
     "https://object.files.data.gouv.fr/data-pipeline-open/prod/agence_bio"

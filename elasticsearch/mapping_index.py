@@ -114,7 +114,7 @@ class EtablissementMapping(InnerDoc):
     concat_enseigne_adresse_siren_siret = Text(
         analyzer=annuaire_analyzer, fields={"keyword": Keyword()}
     )
-    coordonnees = GeoPoint(doc_values=False)
+    coordonnees = GeoPoint()
     complement_adresse = Text()
     complement_adresse_2 = Text()
     date_creation = Date()
@@ -174,7 +174,7 @@ class SiegeMapping(InnerDoc):
     code_postal = Keyword()
     commune = Keyword()
     commune_2 = Text()
-    coordonnees = GeoPoint(doc_values=False)
+    coordonnees = GeoPoint()
     complement_adresse = Text()
     complement_adresse_2 = Text()
     date_creation = Date()
@@ -321,4 +321,6 @@ class StructureMapping(Document):
             "number_of_replicas": ELASTIC_REPLICAS,
             "mapping": {"ignore_malformed": True},
             "index.mapping.nested_objects.limit": 20000,
+            "index.sort.field": "unite_legale.nombre_etablissements_ouverts",
+            "index.sort.order": "desc",
         }
