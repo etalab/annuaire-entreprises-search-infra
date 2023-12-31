@@ -1,10 +1,15 @@
 import pandas as pd
 import requests
+from requests.adapters import HTTPAdapter, Retry
 from dag_datalake_sirene.config import URL_ENTREPRENEUR_SPECTACLE
 
 
 def preprocess_spectacle_data(data_dir):
-    r = requests.get(URL_ENTREPRENEUR_SPECTACLE)
+    retries = Retry(total=10, backoff_factor=1, status_forcelist=[ 429, 500, 502, 503, 504 ])
+    session = requests.Session()
+    session.mount("https://", HTTPAdapter(max_retries=retries))
+
+    r = session.get(URL_ENTREPRENEUR_SPECTACLE)
     with open(data_dir + "spectacle-download.csv", "wb") as f:
         for chunk in r.iter_content(1024):
             f.write(chunk)

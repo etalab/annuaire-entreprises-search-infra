@@ -316,11 +316,11 @@ with DAG(
         python_callable=snapshot_elastic_siren_index,
     )
 
-    check_elastic_index = PythonOperator(
-        task_id="check_elastic_index",
-        provide_context=True,
-        python_callable=check_elastic_index,
-    )
+    # check_elastic_index = PythonOperator(
+    #     task_id="check_elastic_index",
+    #     provide_context=True,
+    #     python_callable=check_elastic_index,
+    # )
 
     wait_downstream_elastic_siren_index_import = PythonOperator(
         task_id="wait_downstream_elastic_siren_index_import",
