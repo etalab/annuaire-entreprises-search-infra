@@ -325,7 +325,7 @@ with DAG(
     wait_downstream_elastic_siren_index_import = PythonOperator(
         task_id="wait_downstream_elastic_siren_index_import",
         provide_context=True,
-        python_callable=snapshot_elastic_siren_index,
+        python_callable=wait_for_downstream_elastic_siren_import,
     )
 
     # update_color_file = PythonOperator(
