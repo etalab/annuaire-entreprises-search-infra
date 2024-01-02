@@ -80,19 +80,19 @@ class DirigeantPPMapping(InnerDoc):
     # and as text (analysed with the french analyser), allows us to search both the
     # exact match for a query and an analysed version of it (without stop words for
     # example)
-    nom = Text(analyzer=annuaire_analyzer, fields={"keyword": Keyword()})
-    nom_usage = Text(analyzer=annuaire_analyzer, fields={"keyword": Keyword()})
-    prenoms = Text(analyzer=annuaire_analyzer, fields={"keyword": Keyword()})
+    nom = Text(analyzer=annuaire_analyzer, index_phrases=True, fields={"keyword": Keyword()})
+    nom_usage = Text(analyzer=annuaire_analyzer, index_phrases=True, fields={"keyword": Keyword()})
+    prenoms = Text(analyzer=annuaire_analyzer, index_phrases=True, fields={"keyword": Keyword()})
     date_de_naissance = Date()
     nationalite = Text()
-    role = Text(analyzer=annuaire_analyzer)
+    role = Text(analyzer=annuaire_analyzer, index_phrases=True)
     date_mise_a_jour = Date()
 
 
 class DirigeantPMMapping(InnerDoc):
     siren = Keyword()
-    denomination = Text(analyzer=annuaire_analyzer, fields={"keyword": Keyword()})
-    role = Text(analyzer=annuaire_analyzer)
+    denomination = Text(analyzer=annuaire_analyzer, index_phrases=True, fields={"keyword": Keyword()})
+    role = Text(analyzer=annuaire_analyzer, index_phrases=True)
     forme_juridique = Keyword()
     date_mise_a_jour = Date()
 
@@ -100,19 +100,19 @@ class DirigeantPMMapping(InnerDoc):
 class EtablissementMapping(InnerDoc):
     activite_principale = Text()
     activite_principale_registre_metier = Keyword()
-    adresse = Text(analyzer=annuaire_analyzer)
+    adresse = Text(analyzer=annuaire_analyzer, index_phrases=True)
     annee_tranche_effectif_salarie = Date()
     caractere_employeur = Keyword()
     cedex = Keyword()
     cedex_2 = Text()
     code_pays_etranger = Text()
     code_pays_etranger_2 = Text()
-    code_postal = Text(analyzer=annuaire_analyzer)
+    code_postal = Text(analyzer=annuaire_analyzer, index_phrases=True)
     # Using analyzer to be able to search using multi-match
-    commune = Text(analyzer=annuaire_analyzer)
+    commune = Text(analyzer=annuaire_analyzer, index_phrases=True)
     commune_2 = Text()
     concat_enseigne_adresse_siren_siret = Text(
-        analyzer=annuaire_analyzer, fields={"keyword": Keyword()}
+        analyzer=annuaire_analyzer, index_phrases=True, fields={"keyword": Keyword()}
     )
     coordonnees = GeoPoint()
     complement_adresse = Text()
@@ -123,12 +123,12 @@ class EtablissementMapping(InnerDoc):
     departement = Keyword()
     distribution_speciale = Text()
     distribution_speciale_2 = Text()
-    enseigne_1 = Text(analyzer=annuaire_analyzer, fields={"keyword": Keyword()})
-    enseigne_2 = Text(analyzer=annuaire_analyzer, fields={"keyword": Keyword()})
-    enseigne_3 = Text(analyzer=annuaire_analyzer, fields={"keyword": Keyword()})
+    enseigne_1 = Text(analyzer=annuaire_analyzer, index_phrases=True, fields={"keyword": Keyword()})
+    enseigne_2 = Text(analyzer=annuaire_analyzer, index_phrases=True, fields={"keyword": Keyword()})
+    enseigne_3 = Text(analyzer=annuaire_analyzer, index_phrases=True, fields={"keyword": Keyword()})
     est_siege = Boolean()
     etat_administratif = Keyword()
-    geo_adresse = Text(analyzer=annuaire_analyzer)
+    geo_adresse = Text(analyzer=annuaire_analyzer, index_phrases=True)
     geo_id = Keyword()
     indice_repetition = Text()
     indice_repetition_2 = Text()
@@ -149,8 +149,8 @@ class EtablissementMapping(InnerDoc):
     libelle_voie = Text()
     libelle_voie_2 = Text()
     longitude = Text()
-    nom_commercial = Text(analyzer=annuaire_analyzer, fields={"keyword": Keyword()})
-    nom_complet = Text(analyzer=annuaire_analyzer, fields={"keyword": Keyword()})
+    nom_commercial = Text(analyzer=annuaire_analyzer, index_phrases=True, fields={"keyword": Keyword()})
+    nom_complet = Text(analyzer=annuaire_analyzer, index_phrases=True, fields={"keyword": Keyword()})
     numero_voie = Text()
     numero_voie_2 = Text()
     region = Keyword()
@@ -164,7 +164,7 @@ class EtablissementMapping(InnerDoc):
 class SiegeMapping(InnerDoc):
     activite_principale = Text()
     activite_principale_registre_metier = Keyword()
-    adresse = Text(analyzer=annuaire_analyzer)
+    adresse = Text(analyzer=annuaire_analyzer, index_phrases=True)
     annee_tranche_effectif_salarie = Date()
     caractere_employeur = Keyword()
     cedex = Keyword()
@@ -183,12 +183,12 @@ class SiegeMapping(InnerDoc):
     departement = Keyword()
     distribution_speciale = Text()
     distribution_speciale_2 = Text()
-    enseigne_1 = Text(analyzer=annuaire_analyzer, fields={"keyword": Keyword()})
-    enseigne_2 = Text(analyzer=annuaire_analyzer, fields={"keyword": Keyword()})
-    enseigne_3 = Text(analyzer=annuaire_analyzer, fields={"keyword": Keyword()})
+    enseigne_1 = Text(analyzer=annuaire_analyzer, index_phrases=True, fields={"keyword": Keyword()})
+    enseigne_2 = Text(analyzer=annuaire_analyzer, index_phrases=True, fields={"keyword": Keyword()})
+    enseigne_3 = Text(analyzer=annuaire_analyzer, index_phrases=True, fields={"keyword": Keyword()})
     est_siege = Boolean()
     etat_administratif = Keyword()
-    geo_adresse = Text(analyzer=annuaire_analyzer)
+    geo_adresse = Text(analyzer=annuaire_analyzer, index_phrases=True)
     geo_id = Keyword()
     indice_repetition = Text()
     indice_repetition_2 = Text()
@@ -209,7 +209,7 @@ class SiegeMapping(InnerDoc):
     libelle_voie = Text()
     libelle_voie_2 = Text()
     longitude = Text()
-    nom_commercial = Text(analyzer=annuaire_analyzer, fields={"keyword": Keyword()})
+    nom_commercial = Text(analyzer=annuaire_analyzer, index_phrases=True, fields={"keyword": Keyword()})
     numero_voie = Text()
     numero_voie_2 = Text()
     region = Keyword()
@@ -261,13 +261,13 @@ class UniteLegaleMapping(InnerDoc):
     date_creation_unite_legale = Date()
     date_mise_a_jour_unite_legale = Date()
     denomination_usuelle_1_unite_legale = Text(
-        analyzer=annuaire_analyzer, fields={"keyword": Keyword()}
+        analyzer=annuaire_analyzer, index_phrases=True, fields={"keyword": Keyword()}
     )
     denomination_usuelle_2_unite_legale = Text(
-        analyzer=annuaire_analyzer, fields={"keyword": Keyword()}
+        analyzer=annuaire_analyzer, index_phrases=True, fields={"keyword": Keyword()}
     )
     denomination_usuelle_3_unite_legale = Text(
-        analyzer=annuaire_analyzer, fields={"keyword": Keyword()}
+        analyzer=annuaire_analyzer, index_phrases=True, fields={"keyword": Keyword()}
     )
     dirigeants_pp = Nested(DirigeantPPMapping)
     dirigeants_pm = Nested(DirigeantPMMapping)
@@ -289,17 +289,17 @@ class UniteLegaleMapping(InnerDoc):
     etablissements = Nested(EtablissementMapping)
     etat_administratif_unite_legale = Keyword()
     identifiant_association_unite_legale = Keyword()
-    liste_dirigeants = Text(analyzer=annuaire_analyzer)
-    liste_elus = Text(analyzer=annuaire_analyzer)
+    liste_dirigeants = Text(analyzer=annuaire_analyzer, index_phrases=True)
+    liste_elus = Text(analyzer=annuaire_analyzer, index_phrases=True)
     nature_juridique_unite_legale = Keyword()
-    nom = Text(analyzer=annuaire_analyzer)
-    nom_raison_sociale = Text(analyzer=annuaire_analyzer, fields={"keyword": Keyword()})
+    nom = Text(analyzer=annuaire_analyzer, index_phrases=True)
+    nom_raison_sociale = Text(analyzer=annuaire_analyzer, index_phrases=True, fields={"keyword": Keyword()})
     nombre_etablissements = Integer()  # NaN can't be stored in an integer array
     nombre_etablissements_ouverts = Integer()
-    prenom = Text(analyzer=annuaire_analyzer)
+    prenom = Text(analyzer=annuaire_analyzer, index_phrases=True)
     section_activite_principale = Keyword()
     siege = Object(SiegeMapping)
-    sigle = Text(analyzer=annuaire_analyzer, fields={"keyword": Keyword()})
+    sigle = Text(analyzer=annuaire_analyzer, index_phrases=True, fields={"keyword": Keyword()})
     siren = Keyword(required=True)
     siret_siege = Keyword()
     slug = Text()
@@ -310,8 +310,8 @@ class UniteLegaleMapping(InnerDoc):
 
 class StructureMapping(Document):
     identifiant = Keyword()
-    nom_complet = Text(analyzer=annuaire_analyzer, fields={"keyword": Keyword()})
-    adresse = Text(analyzer=annuaire_analyzer)
+    nom_complet = Text(analyzer=annuaire_analyzer, index_phrases=True, fields={"keyword": Keyword()})
+    adresse = Text(analyzer=annuaire_analyzer, index_phrases=True)
     unite_legale = Object(UniteLegaleMapping)
 
     class Index:
