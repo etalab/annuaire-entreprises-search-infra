@@ -62,4 +62,4 @@ with DAG(
 
     snapshot_elastic_index.set_upstream(delete_old_snapshots)
     snapshot_elastic_index.set_upstream(get_colors)
-    wait_for_downstream_import(snapshot_elastic_index)
+    wait_for_downstream_import.set_upstream(snapshot_elastic_index)
