@@ -321,6 +321,4 @@ class StructureMapping(Document):
             "number_of_replicas": ELASTIC_REPLICAS,
             "mapping": {"ignore_malformed": True},
             "index.mapping.nested_objects.limit": 20000,
-            "index.sort.field": "unite_legale.nombre_etablissements_ouverts",
-            "index.sort.order": "desc",
         }
