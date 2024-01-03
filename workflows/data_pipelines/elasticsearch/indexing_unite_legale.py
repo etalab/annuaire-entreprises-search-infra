@@ -48,7 +48,7 @@ def doc_unite_legale_generator(data):
             ).to_dict(include_meta=True)
 
 
-def stream_unites_legales(cursor):
+def stream_unites_legales(cursor, elastic_bulk_size):
     logger = 0
     chunk_unites_legales_sqlite = 1
 
@@ -86,7 +86,7 @@ def index_unites_legales_by_chunk(
     cursor, elastic_connection, elastic_bulk_size, elastic_index
 ):
     try:
-        chunk_doc_generator = stream_unites_legales(cursor)
+        chunk_doc_generator = stream_unites_legales(cursor, elastic_bulk_size)
 
         # Bulk index documents into elasticsearch using the parallel version of the
         # bulk helper that runs in multiple threads
