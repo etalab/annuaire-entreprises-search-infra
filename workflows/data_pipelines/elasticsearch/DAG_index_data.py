@@ -109,13 +109,6 @@ with DAG(
         python_callable=check_elastic_index,
     )
 
-    trigger_snapshot_dag = TriggerDagRunOperator(
-        task_id="trigger_snapshot_dag",
-        trigger_dag_id=AIRFLOW_SNAPSHOT_DAG_NAME,
-        wait_for_completion=True,
-        deferrable=False,
-    )
-
     create_sitemap = PythonOperator(
         task_id="create_sitemap",
         provide_context=True,
@@ -159,8 +152,19 @@ with DAG(
     create_elastic_index.set_upstream(get_colors)
     fill_elastic_siren_index.set_upstream(create_elastic_index)
     check_elastic_index.set_upstream(fill_elastic_siren_index)
-    trigger_snapshot_dag.set_upstream(check_elastic_index)
-    test_api.set_upstream(trigger_snapshot_dag)
+
+    if AIRFLOW_ENV == 'prod':
+        trigger_snapshot_dag = TriggerDagRunOperator(
+            task_id="trigger_snapshot_dag",
+            trigger_dag_id=AIRFLOW_SNAPSHOT_DAG_NAME,
+            wait_for_completion=True,
+            deferrable=False,
+        )
+
+        trigger_snapshot_dag.set_upstream(check_elastic_index)
+        test_api.set_upstream(trigger_snapshot_dag)
+    else:
+        test_api.set_upstream(check_elastic_index)
 
     create_sitemap.set_upstream(check_elastic_index)
     update_sitemap.set_upstream(create_sitemap)
