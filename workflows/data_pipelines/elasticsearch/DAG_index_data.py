@@ -16,6 +16,7 @@ from dag_datalake_sirene.workflows.data_pipelines.elasticsearch.task_functions.\
     check_elastic_index,
     create_elastic_index,
     fill_elastic_siren_index,
+    delete_previous_elastic_indices,
 )
 from dag_datalake_sirene.workflows.data_pipelines.elasticsearch.task_functions.\
     sitemap import (
@@ -82,6 +83,12 @@ with DAG(
         task_id="get_latest_sqlite_db",
         provide_context=True,
         python_callable=get_latest_database,
+    )
+
+    delete_previous_elastic_indices = PythonOperator(
+        task_id="delete_previous_elastic_indices",
+        provide_context=True,
+        python_callable=delete_previous_elastic_indices
     )
 
     create_elastic_index = PythonOperator(
