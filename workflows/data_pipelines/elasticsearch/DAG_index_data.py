@@ -4,11 +4,11 @@ from airflow.contrib.operators.ssh_operator import SSHOperator
 from airflow.models import DAG
 from airflow.operators.email_operator import EmailOperator
 from airflow.operators.python import PythonOperator
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 
 from dag_datalake_sirene.helpers.get_colors import (
     get_colors,
 )
-from dag_datalake_sirene.helpers.flush_cache import flush_cache
 
 # fmt: off
 from dag_datalake_sirene.workflows.data_pipelines.elasticsearch.task_functions.\
@@ -31,11 +31,12 @@ from dag_datalake_sirene.workflows.data_pipelines.elasticsearch.task_functions.\
     send_notification_failure_tchap,
 )
 # fmt: on
-from dag_datalake_sirene.helpers.update_color_file import update_color_file
+# from dag_datalake_sirene.helpers.update_color_file import update_color_file
 from dag_datalake_sirene.tests.e2e_tests.run_tests import run_e2e_tests
 from dag_datalake_sirene.config import (
     AIRFLOW_DAG_TMP,
     AIRFLOW_ELK_DAG_NAME,
+    AIRFLOW_SNAPSHOT_DAG_NAME,
     AIRFLOW_DAG_FOLDER,
     AIRFLOW_ENV,
     EMAIL_LIST,
@@ -65,7 +66,7 @@ with DAG(
     dagrun_timeout=timedelta(minutes=60 * 12),
     tags=["siren"],
     catchup=False,  # False to ignore past runs
-    on_failure_callback=send_notification_failure_tchap,
+    # on_failure_callback=send_notification_failure_tchap,
     max_active_runs=1,
 ) as dag:
     get_colors = PythonOperator(
@@ -101,49 +102,29 @@ with DAG(
         python_callable=check_elastic_index,
     )
 
-    create_sitemap = PythonOperator(
-        task_id="create_sitemap",
-        provide_context=True,
-        python_callable=create_sitemap,
+    trigger_snapshot_dag = TriggerDagRunOperator(
+        task_id="trigger_snapshot_dag",
+        trigger_dag_id=AIRFLOW_SNAPSHOT_DAG_NAME,
+        wait_for_completion=True,
+        deferrable=True,
     )
 
-    update_sitemap = PythonOperator(
-        task_id="update_sitemap",
-        provide_context=True,
-        python_callable=update_sitemap,
-    )
+    # create_sitemap = PythonOperator(
+    #     task_id="create_sitemap",
+    #     provide_context=True,
+    #     python_callable=create_sitemap,
+    # )
 
-    update_color_file = PythonOperator(
-        task_id="update_color_file",
-        provide_context=True,
-        python_callable=update_color_file,
-    )
-
-    execute_aio_container = SSHOperator(
-        ssh_conn_id="SERVER",
-        task_id="execute_aio_container",
-        command=f"cd {PATH_AIO} "
-        f"&& docker-compose -f docker-compose-aio.yml up --build -d --force",
-        cmd_timeout=60,
-        dag=dag,
-    )
+    # update_sitemap = PythonOperator(
+    #     task_id="update_sitemap",
+    #     provide_context=True,
+    #     python_callable=update_sitemap,
+    # )
 
     test_api = PythonOperator(
         task_id="test_api",
         provide_context=True,
         python_callable=run_e2e_tests,
-    )
-
-    flush_cache = PythonOperator(
-        task_id="flush_cache",
-        provide_context=True,
-        python_callable=flush_cache,
-        op_args=(
-            REDIS_HOST,
-            REDIS_PORT,
-            REDIS_DB,
-            REDIS_PASSWORD,
-        ),
     )
 
     success_email_body = f"""
@@ -160,10 +141,10 @@ with DAG(
         dag=dag,
     )
 
-    send_notification_tchap = PythonOperator(
-        task_id="send_notification_tchap",
-        python_callable=send_notification_success_tchap,
-    )
+    # send_notification_tchap = PythonOperator(
+    #     task_id="send_notification_tchap",
+    #     python_callable=send_notification_success_tchap,
+    # )
 
     clean_previous_folder.set_upstream(get_colors)
     get_latest_sqlite_database.set_upstream(clean_previous_folder)
@@ -171,16 +152,12 @@ with DAG(
     create_elastic_index.set_upstream(get_latest_sqlite_database)
     fill_elastic_siren_index.set_upstream(create_elastic_index)
     check_elastic_index.set_upstream(fill_elastic_siren_index)
+    trigger_snapshot_dag.set_upstream(check_elastic_index)
+    test_api.set_upstream(trigger_snapshot_dag)
 
-    create_sitemap.set_upstream(check_elastic_index)
-    update_sitemap.set_upstream(create_sitemap)
+    # create_sitemap.set_upstream(check_elastic_index)
+    # update_sitemap.set_upstream(create_sitemap)
 
-    update_color_file.set_upstream(check_elastic_index)
-
-    execute_aio_container.set_upstream(update_color_file)
-    test_api.set_upstream(execute_aio_container)
-    flush_cache.set_upstream(test_api)
-
-    send_email.set_upstream(flush_cache)
-    send_email.set_upstream(update_sitemap)
-    send_notification_tchap.set_upstream(send_email)
+    send_email.set_upstream(test_api)
+    # send_email.set_upstream(update_sitemap)
+    # send_notification_tchap.set_upstream(send_email)

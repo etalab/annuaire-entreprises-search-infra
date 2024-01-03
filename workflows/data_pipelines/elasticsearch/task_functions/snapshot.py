@@ -88,6 +88,6 @@ def delete_old_snapshots(**kwargs):
             f"Deleting snapshot {snapshot['snapshot']} from {ELASTIC_SNAPSHOT_REPOSITORY}"
         )
 
-        # elastic_connection.snapshot.delete(
-        #     repository=ELASTIC_SNAPSHOT_REPOSITORY, snapshot=snapshot["snapshot"]
-        # )
+        elastic_connection.snapshot.delete(
+            repository=ELASTIC_SNAPSHOT_REPOSITORY, snapshot=snapshot["snapshot"]
+        )
