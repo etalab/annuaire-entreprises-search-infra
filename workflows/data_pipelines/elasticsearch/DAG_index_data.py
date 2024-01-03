@@ -74,16 +74,16 @@ with DAG(
         task_id="get_colors", provide_context=True, python_callable=get_colors
     )
 
-    clean_previous_folder = CleanFolderOperator(
-        task_id="clean_previous_folder",
-        folder_path=f"{AIRFLOW_DAG_TMP}+{AIRFLOW_DAG_FOLDER}+{AIRFLOW_ELK_DAG_NAME}",
-    )
+    # clean_previous_folder = CleanFolderOperator(
+    #     task_id="clean_previous_folder",
+    #     folder_path=f"{AIRFLOW_DAG_TMP}+{AIRFLOW_DAG_FOLDER}+{AIRFLOW_ELK_DAG_NAME}",
+    # )
 
-    get_latest_sqlite_database = create_sqlite_database = PythonOperator(
-        task_id="get_latest_sqlite_db",
-        provide_context=True,
-        python_callable=get_latest_database,
-    )
+    # get_latest_sqlite_database = create_sqlite_database = PythonOperator(
+    #     task_id="get_latest_sqlite_db",
+    #     provide_context=True,
+    #     python_callable=get_latest_database,
+    # )
 
     delete_previous_elastic_indices = PythonOperator(
         task_id="delete_previous_elastic_indices",
@@ -153,10 +153,10 @@ with DAG(
     #     python_callable=send_notification_success_tchap,
     # )
 
-    clean_previous_folder.set_upstream(get_colors)
-    get_latest_sqlite_database.set_upstream(clean_previous_folder)
+    # clean_previous_folder.set_upstream(get_colors)
+    # get_latest_sqlite_database.set_upstream(clean_previous_folder)
 
-    create_elastic_index.set_upstream(get_latest_sqlite_database)
+    create_elastic_index.set_upstream(get_colors)
     fill_elastic_siren_index.set_upstream(create_elastic_index)
     check_elastic_index.set_upstream(fill_elastic_siren_index)
     trigger_snapshot_dag.set_upstream(check_elastic_index)

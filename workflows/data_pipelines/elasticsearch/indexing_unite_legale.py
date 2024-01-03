@@ -48,11 +48,10 @@ def doc_unite_legale_generator(data):
             ).to_dict(include_meta=True)
 
 
-def index_unites_legales_by_chunk(
-    cursor, elastic_connection, elastic_bulk_size, elastic_index
-):
+def stream_unites_legales(cursor):
     logger = 0
     chunk_unites_legales_sqlite = 1
+
     while chunk_unites_legales_sqlite:
         chunk_unites_legales_sqlite = cursor.fetchmany(elastic_bulk_size)
         unite_legale_columns = tuple([x[0] for x in cursor.description])
@@ -76,23 +75,34 @@ def index_unites_legales_by_chunk(
         logger += 1
         if logger % 100000 == 0:
             logging.info(f"logger={logger}")
-        try:
-            chunk_doc_generator = doc_unite_legale_generator(
-                chunk_unites_legales_processed
-            )
-            # Bulk index documents into elasticsearch using the parallel version of the
-            # bulk helper that runs in multiple threads
-            # The bulk helper accept an instance of Elasticsearch class and an
-            # iterable, a generator in our case
-            for success, details in parallel_bulk(
-                elastic_connection, chunk_doc_generator, chunk_size=elastic_bulk_size
-            ):
-                if not success:
-                    raise Exception(f"A file_access document failed: {details}")
-        except Exception as e:
-            logging.error(f"Failed to send to Elasticsearch: {e}")
-        doc_count = elastic_connection.cat.count(
-            index=elastic_index, params={"format": "json"}
-        )[0]["count"]
-        logging.info(f"Number of documents indexed: {doc_count}")
+
+        chunk_doc_generator = doc_unite_legale_generator(chunk_unites_legales_processed)
+
+        for item in chunk_doc_generator:
+            yield item
+
+
+def index_unites_legales_by_chunk(
+    cursor, elastic_connection, elastic_bulk_size, elastic_index
+):
+    try:
+        chunk_doc_generator = stream_unites_legales(cursor)
+
+        # Bulk index documents into elasticsearch using the parallel version of the
+        # bulk helper that runs in multiple threads
+        # The bulk helper accept an instance of Elasticsearch class and an
+        # iterable, a generator in our case
+        for success, details in parallel_bulk(
+            elastic_connection, chunk_doc_generator, chunk_size=elastic_bulk_size
+        ):
+            if not success:
+                raise Exception(f"A file_access document failed: {details}")
+    except Exception as e:
+        logging.error(f"Failed to send to Elasticsearch: {e}")
+
+    doc_count = elastic_connection.cat.count(
+        index=elastic_index, params={"format": "json"}
+    )[0]["count"]
+
+    logging.info(f"Number of documents indexed: {doc_count}")
     return doc_count
