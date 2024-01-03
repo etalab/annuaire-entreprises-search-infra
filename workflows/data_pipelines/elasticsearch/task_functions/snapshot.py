@@ -85,7 +85,7 @@ def delete_old_snapshots(**kwargs):
 
     for snapshot in snapshots_to_remove:
         logging.info(
-            f"Deleting snapshot {snapshot['snapshot']} from {ELASTIC_SNAPSHOT_REPOSITORY}/{snapshot_name}"
+            f"Deleting snapshot {snapshot['snapshot']} from {ELASTIC_SNAPSHOT_REPOSITORY}"
         )
 
         # elastic_connection.snapshot.delete(
