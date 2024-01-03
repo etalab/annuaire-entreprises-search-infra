@@ -76,13 +76,12 @@ def delete_old_snapshots(**kwargs):
         repository=ELASTIC_SNAPSHOT_REPOSITORY,
         snapshot="*",
         ignore_unavailable=True,
-        sort="start_time",
     )
 
-    snapshots_to_remove = [
-        snapshot
-        for snapshot in snapshots["snapshots"][:-ELASTIC_SNAPSHOT_MAX_REVISIONS]
-    ]
+    snapshots = list(
+        sorted(snapshots["snapshots"], key=lambda snapshot: snapshot["start_time"])
+    )
+    snapshots_to_remove = snapshots[:-ELASTIC_SNAPSHOT_MAX_REVISIONS]
 
     for snapshot in snapshots_to_remove:
         logging.info(
