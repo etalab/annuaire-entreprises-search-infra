@@ -149,7 +149,7 @@ with DAG(
     clean_previous_folder.set_upstream(get_colors)
     get_latest_sqlite_database.set_upstream(clean_previous_folder)
 
-    create_elastic_index.set_upstream(get_colors)
+    create_elastic_index.set_upstream(get_latest_sqlite_database)
     fill_elastic_siren_index.set_upstream(create_elastic_index)
     check_elastic_index.set_upstream(fill_elastic_siren_index)
 
