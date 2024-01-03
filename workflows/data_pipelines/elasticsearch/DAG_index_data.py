@@ -88,7 +88,7 @@ with DAG(
     delete_previous_elastic_indices = PythonOperator(
         task_id="delete_previous_elastic_indices",
         provide_context=True,
-        python_callable=delete_previous_elastic_indices
+        python_callable=delete_previous_elastic_indices,
     )
 
     create_elastic_index = PythonOperator(
