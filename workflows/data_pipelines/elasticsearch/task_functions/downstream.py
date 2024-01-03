@@ -49,4 +49,5 @@ def wait_for_downstream_import(**kwargs):
             time.sleep(5)
             waited_for += 5
 
-    raise Exception("Downstream import is taking too long")
+    if len(pending) > 0:
+        raise Exception("Downstream import is taking too long")
