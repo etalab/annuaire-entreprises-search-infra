@@ -2,6 +2,7 @@ import re
 
 import pytest
 from dag_datalake_sirene.tests.e2e_tests.response_tester import APIResponseTester
+from dag_datalake_sirene.config import API_URL
 
 min_total_results = 10
 min_total_results_filters = 1000
@@ -9,8 +10,7 @@ min_total_results_filters = 1000
 
 @pytest.fixture
 def api_response_tester():
-    api_url = "http://aio:4500/"
-    return APIResponseTester(api_url)
+    return APIResponseTester(API_URL)
 
 
 def test_fetch_company(api_response_tester):
