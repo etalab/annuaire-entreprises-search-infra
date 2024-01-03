@@ -82,7 +82,7 @@ ELASTIC_DOWNSTREAM_URLS = Variable.get("ELASTIC_DOWNSTREAM_URLS", "")
 ELASTIC_DOWNSTREAM_USER = Variable.get("ELASTIC_DOWNSTREAM_USER", "")
 ELASTIC_DOWNSTREAM_PASSWORD = Variable.get("ELASTIC_DOWNSTREAM_PASSWORD", "")
 
-API_URL = Variable.get("API_URL", "http://aio:4500/")
+API_URL = Variable.get("API_URL", "http://aio:4500")
 
 # Datasets
 URL_AGENCE_BIO = (
