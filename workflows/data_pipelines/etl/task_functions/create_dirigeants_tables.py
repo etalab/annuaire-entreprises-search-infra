@@ -25,7 +25,7 @@ from dag_datalake_sirene.workflows.data_pipelines.etl.sqlite.queries.dirigeants 
 )
 
 
-from dag_datalake_sirene.helpers.minio_helpers import minio_client
+from dag_datalake_sirene.helpers.s3_helpers import s3_client
 
 
 from dag_datalake_sirene.config import (
@@ -36,7 +36,7 @@ from dag_datalake_sirene.config import (
 
 
 def get_latest_dirigeants_database():
-    minio_client.get_latest_file_minio(
+    s3_client.get_latest_file_minio(
         f"ae/{AIRFLOW_ENV}/rne/database/",
         f"{RNE_DATABASE_LOCATION}.gz",
     )
